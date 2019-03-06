@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ching.wechatstudy.serviceDao.DakaDao">
+
+    <select id="queryOne" resultType="com.ching.wechatstudy.pojo.DakaCount">
+    SELECT
+	*
+FROM
+	daka_count a
+WHERE
+	1 = 1
+	AND a.subjectNo LIKE concat(
+	'%',
+#{subjectNo},'%') And a.studentNo like concat('%',#{studentNo},'%') And a.dakaDate > #{date} And  #{date2}> a.dakaDate
+
+      </select>
+
+    <select id="queryAllStudentNo" resultType="java.lang.String">
+      select a.studentNo from student_subject a where 1=1 And a.subjectNo=#{subjectNo}
+  </select>
+
+
+    <insert id="insertAll">
+        insert into daka_count(subjectNo,dakaDate,studentNo) values
+        <!--item就是List里每一项的对象名，要用","分割每一条数据，最后要";"结尾-->
+        <foreach collection="list" item="balance" separator="," close=";">
+            (#{subjectNo},#{date},#{balance})
+        </foreach>
+
+    </insert>
+
+    <update id="updateOne" parameterType="int">
+      UPDATE daka_count SET status = #{zhi} WHERE id = #{id}
+    </update>
+
+    <select id="updateStudentSubject" resultType="java.lang.Integer">
+        UPDATE student_subject SET dakaNum = #{dakaNum} where studentNo=#{studentNo} and subjectNo = #{subjectNo}
+    </select>
+    <select id="queryStudentSubject" resultType="com.ching.wechatstudy.pojo.StudentSubject">
+        select * from student_subject where studentNo=#{studentNo} and subjectNo = #{subjectNo}
+    </select>
+</mapper>

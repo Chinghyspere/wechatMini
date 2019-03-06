@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ching.wechatstudy.serviceDao.TeacherDao">
+    <select id="loginTeacher" resultType="com.ching.wechatstudy.pojo.Teacher">
+        select * from teacher
+         where teacherNo = #{teacherNo} and passWord =#{passWord}
+    </select>
+
+    <select id="querySubjectTeacher" resultType="com.ching.wechatstudy.pojo.SubjectMeta">
+SELECT
+  DISTINCT a.subjectNo,a.teacherNo,subjectName,weekDay,addr,c.name
+FROM
+	student_subject a
+	LEFT JOIN subject b ON a.subjectNo = b.subjectNo
+	left join teacher c on c.teacherNo = a.teacherNo
+WHERE
+	1 = 1
+	AND c.teacherNo = #{teacherNo}    </select>
+
+
+    <select id="querySubjectFdy" resultType="com.ching.wechatstudy.pojo.SubjectMeta">
+SELECT
+  DISTINCT a.subjectNo,a.teacherNo,subjectName,weekDay,addr,c.name
+FROM
+	student_subject a
+	LEFT JOIN subject b ON a.subjectNo = b.subjectNo
+	left join teacher c on a.teacherNo = c.teacherNo
+WHERE
+	1 = 1
+	AND a.studentNo in (select studentNo from student where student.teacherNo=#{teacherNo})   </select>
+</mapper>
