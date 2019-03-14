@@ -11,6 +11,9 @@ import com.ching.wechatstudy.utils.ResultCode;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /*
  *
@@ -39,11 +42,26 @@ public class DakaCountController {
         return result;
     }
 
-    //打卡统计
-    @RequestMapping(value = "queryStudentDaka",method = RequestMethod.GET)
-    public Result queryStudentDaka(String subjectNo) {
+    //打卡操作
+    @RequestMapping(value = "queryOne",method = RequestMethod.GET)
+    public Result queryOne(@RequestParam("studentNo")String studentNo,@RequestParam("subjectNo")String subjectNo) {
         Result result = Result.success(ResultCode.SUCCESS);
-        result.setData(dakaImp.queryStudentDaka(subjectNo));
+        StudentSubject studentSubject = new StudentSubject();
+        studentSubject.setStudentNo(studentNo);
+        studentSubject.setSubjectNo(subjectNo);
+        result.setData(dakaImp.queryOne(studentSubject));
+        return result;
+    }
+
+
+
+    //打卡统计查询缺勤学生
+    @RequestMapping(value = "queryStudentDaka",method = RequestMethod.GET)
+    public Result queryStudentDaka(String subjectNo, String date) throws ParseException {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date dates = simpleDateFormat.parse(date);
+        Result result = Result.success(ResultCode.SUCCESS);
+        result.setData(dakaImp.queryStudentDaka(subjectNo,dates));
         return result;
     }
 

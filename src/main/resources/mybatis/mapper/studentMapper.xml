@@ -35,4 +35,11 @@ WHERE
 	AND a.studentNo = #{studentNo}
     </select>
 
+
+    <select id="queryAllStudent" resultType="java.lang.String">
+
+SELECT
+a.studentNo from student a left join student_subject b on a.studentNo = b.studentNo where b.subjectNo= #{subjectNo}
+    </select>
+
 </mapper>

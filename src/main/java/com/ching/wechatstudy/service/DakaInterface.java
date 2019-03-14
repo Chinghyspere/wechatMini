@@ -18,7 +18,7 @@ import java.util.Map;
 public interface DakaInterface {
     String daka(Integer zhi ,StudentSubject studentSubject);
     List<DakaCount> queryOne(StudentSubject studentSubject);
-    Map<String,List<Student>> queryStudentDaka(String subjectNo);
+    Map<String,List<Student>> queryStudentDaka(String subjectNo ,Date date);
 
 
 }

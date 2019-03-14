@@ -7,6 +7,7 @@ import com.ching.wechatstudy.service.DakaInterface;
 import com.ching.wechatstudy.serviceDao.DakaDao;
 import com.ching.wechatstudy.serviceDao.StudentDao;
 import com.ching.wechatstudy.serviceDao.SubjectDao;
+import com.ching.wechatstudy.serviceDao.qjDao;
 import com.ching.wechatstudy.utils.LogUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,6 +34,9 @@ public class DakaImp implements DakaInterface {
 
     @Resource(name = "studentDao")
     StudentDao studentDao;
+
+    @Resource(name = "qjDao")
+    qjDao qjDao;
 
     @Resource(name="subjectDao")
     SubjectDao subjectDao;
@@ -108,22 +112,47 @@ public class DakaImp implements DakaInterface {
 
     //查询未打卡的学生
     @Override
-    public Map<String,List<Student>> queryStudentDaka(String subjectNo) {
+    public Map<String,List<Student>> queryStudentDaka(String subjectNo,Date date) {
         List<Calendar> dates = getNowDate();
         List<String> list = new ArrayList<>();
         List<String> list2 = new ArrayList<>();
+        List<String> list3 = qjDao.queryQjStudentNo(date);
         Map<String,List<Student>> map = new HashMap<>();
-        dakaDao.queryOne(dates.get(0).getTime(),dates.get(1).getTime(),subjectNo,"").forEach(s->{
-            if(s.getStatus()==0){
-                list.add(s.getStudentNo());
-            }else if(s.getStatus()==2){
-                list2.add(s.getStudentNo());
+        List<DakaCount> students= dakaDao.queryOne(dates.get(0).getTime(),dates.get(1).getTime(),subjectNo,"");
+        //若无人打卡则全为缺勤
+        if (students.size() == 0) {
+            list.addAll(studentDao.queryAllStudent(subjectNo));
+        } else {
+            students.forEach(s -> {
+                if (s.getStatus() == 0 && !list3.contains(s.getStudentNo())) {
+                    list.add(s.getStudentNo());
+                } else if (s.getStatus() == 2) {
+                    list2.add(s.getStudentNo());
+                }
+            });
+        }
+        //移除缺勤和请假相同的学生
+        list3.forEach(ll->{
+            if(list.contains(ll)){
+                list.remove(ll);
             }
         });
-        List<Student> listStudents = studentDao.queryAllStudents((List<String>) isNull(list));
-        List<Student> listStudents2 = studentDao.queryAllStudents((List<String>) isNull(list2));
+
+        List<Student> listStudents = null;
+        List<Student> listStudents2 = null;
+        List<Student> listStudents3 = null;
+        if(isNull(list)!=null){
+            listStudents = studentDao.queryAllStudents(list);
+        }
+        if(isNull(list2)!=null){
+            listStudents2 = studentDao.queryAllStudents(list2);
+        }
+        if(isNull(list3)!=null){
+            listStudents3 = studentDao.queryAllStudents(list3);
+        }
         map.put("qq",listStudents);
         map.put("cd",listStudents2);
+        map.put("qj",listStudents3);
         return map;
     }
 

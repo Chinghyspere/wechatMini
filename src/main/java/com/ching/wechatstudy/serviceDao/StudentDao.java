@@ -27,4 +27,5 @@ public interface StudentDao {
     List<Student> queryAllStudents(List<String> studentNo);
     //查询学生课表基础信息
     List<SubjectMeta> querySubjectStudent(String studentNo);
+    List<String> queryAllStudent(String subjectNo);
 }

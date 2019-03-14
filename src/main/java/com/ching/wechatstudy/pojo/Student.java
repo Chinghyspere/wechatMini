@@ -21,4 +21,5 @@ public class Student  implements Serializable {
     private String name;
     private String passWord;
     private String teacherNo;
+    private String classbj;
 }

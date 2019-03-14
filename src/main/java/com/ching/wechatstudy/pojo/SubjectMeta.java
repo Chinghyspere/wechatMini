@@ -29,4 +29,5 @@ public class SubjectMeta implements Serializable {
     private String addr;
     private String name;
 
+
 }
